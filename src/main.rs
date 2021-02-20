@@ -132,3 +132,11 @@ fn render(pixels: &mut [u8],
         }
     }
 }
+
+extern crate image;
+use image::ColorType;
+use image::png::PNGEncoder;
+use std::fs::File;
+
+/// Write the buffer `pixels`, whose dimensions are given by `bounds`, to the
+/// file named `filename`.
