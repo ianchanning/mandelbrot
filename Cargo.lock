@@ -7,6 +7,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "aae1277d39aeec15cb388266ecc24b11c80469deae6067e17a1a7aa9e5c1f234"
 
 [[package]]
+name = "atomic_chunks_mut"
+version = "0.1.0"
+source = "git+https://github.com/jimblandy/atomic-chunks-mut.git#6d43a652f5c4df3a191c9d29e9f5d60cc677c470"
+dependencies = [
+ "crossbeam",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -232,6 +240,7 @@ checksum = "7d947cbb889ed21c2a84be6ffbaebf5b4e0f4340638cba0444907e38b56be084"
 name = "mandelbrot"
 version = "0.1.0"
 dependencies = [
+ "atomic_chunks_mut",
  "crossbeam",
  "image",
  "num",

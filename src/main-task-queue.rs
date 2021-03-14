@@ -22,8 +22,11 @@ struct Complex<T> {
 /// return `None`.
 fn escape_time(c: Complex<f64>, limit: u32) -> Option<u32> {
     let mut z = Complex { re: 0.0, im: 0.0 };
+    // let mut z = c;
+
     for i in 0..limit {
-        z = z * z + c;
+        z = z*z + c;
+        // z = z*z;
         if z.norm_sqr() > 4.0 {
             return Some(i);
         }
@@ -203,9 +206,9 @@ fn main() {
                                 let height = band.len() / bounds.0;
                                 let band_bounds = (bounds.0, height);
                                 let band_upper_left = pixel_to_point(bounds, (0, top),
-                                                                     upper_left, lower_right);
+                                    upper_left, lower_right);
                                 let band_lower_right = pixel_to_point(bounds, (bounds.0, top + height),
-                                                                      upper_left, lower_right);
+                                upper_left, lower_right);
                                 render(band, band_bounds, band_upper_left, band_lower_right);
                             }
                         }
