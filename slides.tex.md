@@ -18,11 +18,30 @@ Generating the Mandelbrot set with one processor.
 
 The required changes to use multiple processors.
 
+Fearless concurrency.
+
 # The Mandelbrot set
 
-$z=a+bi$
+Complex number $z$
 
-$z=z^2+c$
+$$
+\begin{aligned}
+z &= a+bi \\
+\end{aligned}
+$$
+
+Iterate $z$ from 0, square it and add another complex number $c$
+
+$$
+\begin{aligned}
+z_0 &= 0 \\
+z_{n+1} &= z_n^2+c \\
+\end{aligned}
+$$
+
+For some values of $c$, $z$ will stay within a distance of 2 from the origin
+
+Those are 'in' the Mandelbrot Set
 
 # Complex numbers and iterating complex numbers
 
@@ -42,3 +61,5 @@ $$
 # Generating the Mandelbrot set with one processor
 
 # The required changes to use multiple processors
+
+# Fearless concurrency
