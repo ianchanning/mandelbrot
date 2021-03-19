@@ -8,6 +8,8 @@ Based on the Concurrency section of Chapter 2 (A Tour of Rust)
 
 from the O'Reilly "Programming Rust" book.
 
+Extra concurrency algorithms from <https://github.com/ProgrammingRust/mandelbrot>
+
 # Introduction
 
 Rust.
