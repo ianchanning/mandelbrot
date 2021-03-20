@@ -26,7 +26,7 @@ fn escape_time(c: Complex<f64>, limit: u32) -> Option<u32> {
 
     for i in 0..limit {
         z = z * z + c;
-        // z = z*z;
+        // z = z * z;
         if z.norm_sqr() > 4.0 {
             return Some(i);
         }
@@ -48,10 +48,12 @@ use std::str::FromStr;
 fn parse_pair<T: FromStr>(s: &str, separator: char) -> Option<(T, T)> {
     match s.find(separator) {
         None => None,
-        Some(index) => match (T::from_str(&s[..index]), T::from_str(&s[index + 1..])) {
-            (Ok(l), Ok(r)) => Some((l, r)),
-            _ => None,
-        },
+        Some(index) => {
+            match (T::from_str(&s[..index]), T::from_str(&s[index + 1..])) {
+                (Ok(l), Ok(r)) => Some((l, r)),
+                _ => None,
+            }
+        }
     }
 }
 
@@ -140,7 +142,8 @@ fn render(
 
     for row in 0..bounds.1 {
         for column in 0..bounds.0 {
-            let point = pixel_to_point(bounds, (column, row), upper_left, lower_right);
+            let point =
+                pixel_to_point(bounds, (column, row), upper_left, lower_right);
             pixels[row * bounds.0 + column] = match escape_time(point, 255) {
                 None => 0,
                 Some(count) => 255 - count as u8,
@@ -179,24 +182,30 @@ use std::sync::Mutex;
 fn main() {
     let args: Vec<String> = std::env::args().collect();
 
-    if args.len() != 5 {
+    if args.len() != 7 {
         writeln!(
             std::io::stderr(),
-            "Usage: mandelbrot FILE PIXELS UPPERLEFT LOWERRIGHT"
+            "Usage: mandelbrot FILE <HEIGHTxWIDTH> TOP RIGHT BOTTOM LEFT"
         )
         .unwrap();
         writeln!(
             std::io::stderr(),
-            "Example: {} mandel.png 1000x750 -1.20,0.35 -1,0.20",
+            "Example: {} mandel.png 1000x750 0.35 -1 0.20 -1.20",
             args[0]
         )
         .unwrap();
         std::process::exit(1);
     }
 
-    let bounds = parse_pair(&args[2], 'x').expect("error parsing image dimensions");
-    let upper_left = parse_complex(&args[3]).expect("error parsing upper left corner point");
-    let lower_right = parse_complex(&args[4]).expect("error parsing lower right corner point");
+    let bounds =
+        parse_pair(&args[2], 'x').expect("error parsing image dimensions");
+    // 3:top 4:right 5:bottom 6:left
+    let left_top = format!("{},{}", args[6], args[3]);
+    let right_bottom = format!("{},{}", args[4], args[5]);
+    let upper_left = parse_complex(&left_top)
+        .expect("error parsing upper left corner point");
+    let lower_right = parse_complex(&right_bottom)
+        .expect("error parsing lower right corner point");
 
     let mut pixels = vec![0; bounds.0 * bounds.1];
 
@@ -204,7 +213,8 @@ fn main() {
     let rows_per_band = bounds.1 / threads + 1;
 
     {
-        let bands = Mutex::new(pixels.chunks_mut(rows_per_band * bounds.0).enumerate());
+        let bands =
+            Mutex::new(pixels.chunks_mut(rows_per_band * bounds.0).enumerate());
         crossbeam::scope(|spawner| {
             for _ in 0..threads {
                 spawner.spawn(|| loop {
@@ -219,15 +229,24 @@ fn main() {
                             let top = rows_per_band * i;
                             let height = band.len() / bounds.0;
                             let band_bounds = (bounds.0, height);
-                            let band_upper_left =
-                                pixel_to_point(bounds, (0, top), upper_left, lower_right);
+                            let band_upper_left = pixel_to_point(
+                                bounds,
+                                (0, top),
+                                upper_left,
+                                lower_right,
+                            );
                             let band_lower_right = pixel_to_point(
                                 bounds,
                                 (bounds.0, top + height),
                                 upper_left,
                                 lower_right,
                             );
-                            render(band, band_bounds, band_upper_left, band_lower_right);
+                            render(
+                                band,
+                                band_bounds,
+                                band_upper_left,
+                                band_lower_right,
+                            );
                         }
                     }
                 });
